@@ -1,0 +1,17 @@
+model Review {
+  id         String   @id @default(uuid())
+  rating     Int      // 1 to 5 validation on application level
+  comment    String?
+  
+  customerId String
+  gearId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customer   User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  gear       Gear     @relation(fields: [gearId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, gearId])
+
+  @@map("reviews")
+}

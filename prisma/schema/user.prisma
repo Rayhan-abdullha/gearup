@@ -1,0 +1,18 @@
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role       @default(CUSTOMER)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  profile       Profile?   // One-to-one relationship
+  gearListings  Gear[]    @relation("ProviderGear")
+  orders        Order[]   @relation("CustomerOrders")
+  reviews       Review[]
+
+  @@map("users")
+}

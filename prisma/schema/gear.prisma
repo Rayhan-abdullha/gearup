@@ -1,0 +1,37 @@
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  gearListings Gear[]
+}
+
+model Gear {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  brand        String
+  specifications Json?
+  pricePerDay  Float
+  stock        Int      @default(1)
+  isAvailable  Boolean  @default(true)
+  
+  providerId   String
+  categoryId   String
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  provider     User         @relation("ProviderGear", fields: [providerId], references: [id], onDelete: Cascade)
+  category     Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems   OrderItem[]
+  reviews      Review[]
+
+  @@index([categoryId])
+  @@index([providerId])
+
+  @@map("gears")
+}
