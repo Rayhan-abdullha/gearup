@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import config from "../../config";
 import { prisma } from "../../lib/prisma";
-import { RegisterUserPayload } from "./interface";
+import { profileUpdateDTO, RegisterUserPayload } from "./interface";
 
 const registerUserIntoDB = async (payload: RegisterUserPayload) => {
   const { name, email, password, role } = payload;
@@ -24,6 +24,9 @@ const registerUserIntoDB = async (payload: RegisterUserPayload) => {
       email,
       password: hashedPassword,
       role,
+      profile: {
+        create: {},
+      },
     },
   });
 
@@ -40,6 +43,70 @@ const registerUserIntoDB = async (payload: RegisterUserPayload) => {
   return user;
 };
 
+const getMyProfileFromDB = async (userId: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    omit: {
+      password: true,
+    },
+    include: {
+      profile: true,
+    },
+  });
+
+  return user;
+};
+
+const updateMyProfileInDB = async (
+  userId: string,
+  payload: profileUpdateDTO,
+) => {
+  const {
+    name,
+    phoneNumber,
+    avatarUrl,
+    bio,
+    deliveryAddress,
+    city,
+    postalCode,
+    shopName,
+    shopAddress,
+    payoutDetails,
+  } = payload;
+  if (name) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+      },
+    });
+  }
+
+  const userProfile = await prisma.profile.findUnique({
+    where: { userId: userId },
+  });
+
+  const updatedInfo = {
+    phoneNumber: phoneNumber || userProfile?.phoneNumber,
+    avatarUrl: avatarUrl || userProfile?.avatarUrl,
+    bio: bio || userProfile?.bio,
+    deliveryAddress: deliveryAddress || userProfile?.deliveryAddress,
+    city: city || userProfile?.city,
+    postalCode: postalCode || userProfile?.postalCode,
+    shopName: shopName || userProfile?.shopName,
+    shopAddress: shopAddress || userProfile?.shopAddress,
+    payoutDetails: payoutDetails || userProfile?.payoutDetails,
+  };
+  const updatedUser = await prisma.profile.update({
+    where: { userId: userId },
+    data: {
+      ...updatedInfo,
+    },
+  });
+  return updatedUser;
+};
 export const userService = {
   registerUserIntoDB,
+  getMyProfileFromDB,
+  updateMyProfileInDB,
 };

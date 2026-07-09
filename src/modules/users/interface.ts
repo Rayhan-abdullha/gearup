@@ -9,3 +9,17 @@ export interface RegisterUserPayload {
   password: string;
   role: Role;
 }
+
+export interface profileUpdateDTO {
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  avatarUrl?: string;
+  bio?: string;
+  deliveryAddress?: string;
+  city?: string;
+  postalCode?: string;
+  shopName?: string;
+  shopAddress?: string;
+  payoutDetails?: any;
+}

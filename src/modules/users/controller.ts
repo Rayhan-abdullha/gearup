@@ -1,30 +1,52 @@
 import httpStatus from "http-status";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { userService } from "./services";
-const registerUser = async (req: Request, res: Response) => {
-  try {
-    const payload = req.body;
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import { Role } from "../../../generated/prisma/client";
 
-    const user = await userService.registerUserIntoDB(payload);
-    res.status(httpStatus.CREATED).json({
+const registerUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = req.body;
+    const result = await userService.registerUserIntoDB(payload);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      statusCode: httpStatus.CREATED,
-      message: "User registered successfully",
-      data: {
-        user,
-      },
+      message: "User created successfully !",
+      data: result,
     });
-  } catch (error) {
-    console.error("Error registering user:", error);
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-      message: "Failed to register user",
-      error: (error as Error).message,
+  },
+);
+
+const getMyProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id as string;
+    const result = await userService.getMyProfileFromDB(userId);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User profile fetched successfully !",
+      data: result,
     });
-  }
-};
+  },
+);
+
+const updateMyProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id as string;
+    const payload = req.body;
+    const result = await userService.updateMyProfileInDB(userId, payload);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User profile updated successfully !",
+      data: result,
+    });
+  },
+);
 
 export const userController = {
   registerUser,
+  getMyProfile,
+  updateMyProfile,
 };
