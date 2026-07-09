@@ -3,6 +3,9 @@ import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import config from "./config";
 import { userRoutes } from "./modules/users/routes";
+import { authRoutes } from "./modules/auth/routes";
+import { notFound } from "./middlewares/notFound";
+import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 
 const app: Application = express();
 
@@ -22,4 +25,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/auth", authRoutes);
+
+app.use(notFound);
+app.use(globalErrorHandler);
 export default app;
