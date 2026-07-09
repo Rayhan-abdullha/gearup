@@ -2,8 +2,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
 import config from "./config";
-import { userRoutes } from "./modules/users/routes";
-import { authRoutes } from "./modules/auth/routes";
+import { userRoutes } from "./modules/users/user.routes";
+import { authRoutes } from "./modules/auth/auth.routes";
 import { notFound } from "./middlewares/notFound";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 

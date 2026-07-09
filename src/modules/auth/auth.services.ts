@@ -3,7 +3,7 @@ import { JwtPayload, SignOptions } from "jsonwebtoken";
 import config from "../../config";
 import { prisma } from "../../lib/prisma";
 import { jwtUtils } from "../../utils/jwt";
-import { ILoginUser } from "./interface";
+import { ILoginUser } from "./auth.interface";
 
 const loginUser = async (payload: ILoginUser) => {
   const { email, password } = payload;

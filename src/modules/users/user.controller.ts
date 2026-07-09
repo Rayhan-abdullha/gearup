@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import { Request, Response, NextFunction } from "express";
-import { userService } from "./services";
+import { userService } from "./user.services";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { Role } from "../../../generated/prisma/client";
