@@ -9,6 +9,7 @@ import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 import { providerRoutes } from "./modules/provider/provider.routes";
 import { gearRoutes } from "./modules/gear/gear.routes";
 import rentalRoutes from "./modules/rental/rental.routes";
+import adminRoutes from "./modules/admin/admin.routes";
 
 const app: Application = express();
 
@@ -32,6 +33,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/provider", providerRoutes);
 app.use("/api/v1/gear", gearRoutes);
 app.use("/api/v1/rentals", rentalRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.use(notFound);
 app.use(globalErrorHandler);
