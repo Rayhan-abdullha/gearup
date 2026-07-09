@@ -26,37 +26,73 @@ const createGear = catchAsync(
 
 const updateGear = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id as string;
-    const payload = req.body;
-    const providerId = req.user?.id as string;
+    const gearId = req.params.id as string;
+    const providerId = (req as any).user.id; // Pulled from your auth session payload
+    const updateData = req.body;
 
-    const updatedGear = await providerServices.updateGear(
-      id,
+    const result = await providerServices.updateGear(
+      gearId,
       providerId,
-      payload,
+      updateData,
     );
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Gear updated successfully",
-      data: updatedGear,
+      message: "Gear listing updated successfully",
+      data: result,
     });
   },
 );
 
 const deleteGear = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id as string;
-    const providerId = req.user?.id as string;
+    const gearId = req.params.id as string;
+    const providerId = (req as any).user.id;
 
-    await providerServices.deleteGear(id, providerId);
+    await providerServices.deleteGear(gearId, providerId);
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Gear deleted successfully",
-      data: null, // Commonly return null or the deleted ID
+      message: "Gear listing removed from inventory successfully",
+      data: null,
+    });
+  },
+);
+
+const getGearOrders = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const providerId = (req as any).user.id;
+
+    const result = await providerServices.getGearOrders(providerId);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Incoming rental orders retrieved successfully",
+      data: result,
+    });
+  },
+);
+
+const updateGearOrder = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const orderId = req.params.id as string;
+    const providerId = (req as any).user.id;
+    const { status } = req.body; // Expects {"status": "PICKED_UP"} or {"status": "RETURNED"}
+
+    const result = await providerServices.updateGearOrder(
+      orderId,
+      providerId,
+      status,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: `Rental status updated to ${status} successfully`,
+      data: result,
     });
   },
 );
@@ -98,4 +134,6 @@ export const providerController = {
   getCategories,
   updateGear,
   deleteGear,
+  getGearOrders,
+  updateGearOrder,
 };

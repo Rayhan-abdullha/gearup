@@ -14,3 +14,9 @@ export interface ICategory {
   slug: string;
   description?: string;
 }
+export type OrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "PICKED_UP"
+  | "RETURNED"
+  | "CANCELLED";
