@@ -22,20 +22,7 @@ const createPaymentIntent = catchAsync(
     });
   },
 );
-const confirmPaymentWebhook = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const webhookEvent = req.body;
 
-    const result = await paymentServices.confirmPaymentWebhook(webhookEvent);
-
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Webhook event captured and processed",
-      data: result,
-    });
-  },
-);
 const getPaymentHistory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user.id;
@@ -68,7 +55,6 @@ const getPaymentDetails = catchAsync(
 
 export const paymentControllers = {
   createPaymentIntent,
-  confirmPaymentWebhook,
   getPaymentHistory,
   getPaymentDetails,
 };
