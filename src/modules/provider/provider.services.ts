@@ -130,6 +130,15 @@ const updateGearOrder = async (
     throw new Error("Order ID is required");
   }
 
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
   const matchingOrderItem = await prisma.orderItem.findFirst({
     where: {
       orderId,
@@ -141,9 +150,31 @@ const updateGearOrder = async (
     throw new Error("Unauthorized to update status for this rental request");
   }
 
-  return await prisma.order.update({
-    where: { id: orderId },
-    data: { status },
+  if (order.status === "RETURNED") {
+    throw new Error("This order has already been returned and closed out.");
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    if (status === "RETURNED") {
+      for (const item of order.items) {
+        await tx.gear.update({
+          where: { id: item.gearId },
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+      }
+    }
+
+    // Update and return the final order status
+    const updatedOrder = await tx.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+
+    return updatedOrder;
   });
 };
 const createCategory = async (payload: ICategory) => {
