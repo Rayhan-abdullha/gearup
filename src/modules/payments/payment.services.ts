@@ -107,16 +107,11 @@ const confirmPaymentWebhook = async (signature: string, rawBody: Buffer) => {
     signature,
     config.stripe_webhook_secret,
   );
-  console.log("Received Stripe webhook event:", event.type);
 
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log("Checkout session completed:", session);
-
       const orderId = session.metadata?.orderId;
-      console.log("Order ID from metadata:", orderId);
-
       if (!orderId) {
         throw new Error("Order ID missing");
       }
@@ -141,7 +136,7 @@ const confirmPaymentWebhook = async (signature: string, rawBody: Buffer) => {
 
           data: {
             paymentStatus: "PAID",
-            status: "CONFIRMED",
+            status: "PLACED",
             transactionId: session.payment_intent?.toString(),
           },
         });

@@ -11,6 +11,7 @@ export declare const UserStatus: {
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];
 export declare const OrderStatus: {
     readonly PENDING: "PENDING";
+    readonly PLACED: "PLACED";
     readonly CONFIRMED: "CONFIRMED";
     readonly PICKED_UP: "PICKED_UP";
     readonly RETURNED: "RETURNED";

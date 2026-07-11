@@ -53,7 +53,7 @@ const getGearOrders = catchAsync(async (req, res, next) => {
 const updateGearOrder = catchAsync(async (req, res, next) => {
     const orderId = req.params.id;
     const providerId = req.user.id;
-    const { status } = req.body; // Expects {"status": "PICKED_UP"} or {"status": "RETURNED"}
+    const { status } = req.body; // Expects {"status": "CONFIRMED" | "PICKED_UP"}
     const result = await providerServices.updateGearOrder(orderId, providerId, status);
     sendResponse(res, {
         success: true,

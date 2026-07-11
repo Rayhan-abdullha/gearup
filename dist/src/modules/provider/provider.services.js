@@ -35,7 +35,6 @@ const updateGear = async (gearId, providerId, payload) => {
     if (!gearId) {
         throw new Error("Gear ID is required");
     }
-    // Security Verification: Ensure this gear item belongs to the requesting provider
     const existingGear = await prisma.gear.findUnique({
         where: { id: gearId },
     });
@@ -63,13 +62,11 @@ const deleteGear = async (gearId, providerId) => {
     if (existingGear.providerId !== providerId) {
         throw new Error("Unauthorized to remove this gear listing");
     }
-    // Cascade settings in your schema will automatically handle cleaning up children records if safe
     return await prisma.gear.delete({
         where: { id: gearId },
     });
 };
 const getGearOrders = async (providerId) => {
-    // Fetches orders that contain at least one item belonging to this specific provider
     return await prisma.order.findMany({
         where: {
             items: {
@@ -86,7 +83,7 @@ const getGearOrders = async (providerId) => {
             },
             items: {
                 where: {
-                    gear: { providerId: providerId }, // Isolates line items belonging only to this vendor
+                    gear: { providerId: providerId },
                 },
                 include: {
                     gear: true,
@@ -101,7 +98,13 @@ const updateGearOrder = async (orderId, providerId, status) => {
     if (!orderId) {
         throw new Error("Order ID is required");
     }
-    // Verify the order contains items from this provider before executing a status shift
+    const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: { items: true },
+    });
+    if (!order) {
+        throw new Error("Order not found");
+    }
     const matchingOrderItem = await prisma.orderItem.findFirst({
         where: {
             orderId,
@@ -111,10 +114,28 @@ const updateGearOrder = async (orderId, providerId, status) => {
     if (!matchingOrderItem) {
         throw new Error("Unauthorized to update status for this rental request");
     }
-    // Transitions order status through your mapped engine: CONFIRMED -> PICKED_UP -> RETURNED
-    return await prisma.order.update({
-        where: { id: orderId },
-        data: { status },
+    if (order.status === "RETURNED") {
+        throw new Error("This order has already been returned and closed out.");
+    }
+    return await prisma.$transaction(async (tx) => {
+        if (status === "RETURNED") {
+            for (const item of order.items) {
+                await tx.gear.update({
+                    where: { id: item.gearId },
+                    data: {
+                        stock: {
+                            increment: item.quantity,
+                        },
+                    },
+                });
+            }
+        }
+        // Update and return the final order status
+        const updatedOrder = await tx.order.update({
+            where: { id: orderId },
+            data: { status },
+        });
+        return updatedOrder;
     });
 };
 const createCategory = async (payload) => {

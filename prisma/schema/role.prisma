@@ -11,6 +11,7 @@ enum UserStatus {
 
 enum OrderStatus {
   PENDING
+  PLACED
   CONFIRMED
   PICKED_UP
   RETURNED

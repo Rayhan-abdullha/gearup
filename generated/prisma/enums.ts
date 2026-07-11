@@ -28,6 +28,7 @@ export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
 
 export const OrderStatus = {
   PENDING: 'PENDING',
+  PLACED: 'PLACED',
   CONFIRMED: 'CONFIRMED',
   PICKED_UP: 'PICKED_UP',
   RETURNED: 'RETURNED',
