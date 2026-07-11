@@ -1,6 +1,6 @@
 export interface IPaymentIntentInput {
   orderId: string;
-  gateway: "STRIPE" | "SSLCOMMERZ";
+  // gateway: "STRIPE" | "SSLCOMMERZ";
 }
 
 export interface IStripeWebhookInput {

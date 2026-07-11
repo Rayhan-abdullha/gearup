@@ -1,117 +1,178 @@
+import Stripe from "stripe";
 import { prisma } from "../../lib/prisma";
-import { IPaymentIntentInput, IStripeWebhookInput } from "./payment.interface";
+import { IPaymentIntentInput } from "./payment.interface";
+import config from "../../config";
 
-// Mock Stripe initialization for demonstration purposes
-// In production: import Stripe from 'stripe'; const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-const stripeMock = {
-  paymentIntents: {
-    create: async (params: any) => ({
-      id: `pi_mock_${Math.random().toString(36).substring(2, 11)}`,
-      client_secret: `pi_mock_secret_${Math.random().toString(36).substring(2, 11)}`,
-    }),
-  },
-};
+const stripe = new Stripe(config.stripe_secret_key);
 
 const createPaymentIntent = async (
   userId: string,
   payload: IPaymentIntentInput,
 ) => {
-  const { orderId, gateway } = payload;
+  const { orderId } = payload;
 
-  // 1. Find the target order and ensure it belongs to this customer
+  // Find Order and include the actual Gear details inside the OrderItems
   const order = await prisma.order.findUnique({
-    where: { id: orderId },
+    where: {
+      id: orderId,
+    },
+    include: {
+      items: {
+        include: {
+          gear: {
+            select: {
+              title: true, // Pull the gear title safely
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!order) {
-    throw new Error("Rental order not found");
+    throw new Error("Order not found");
   }
+
   if (order.customerId !== userId) {
-    throw new Error("Unauthorized to pay for this rental order");
+    throw new Error("Unauthorized");
   }
+
   if (order.paymentStatus === "PAID") {
-    throw new Error("This order has already been paid for");
+    throw new Error("Order already paid");
   }
 
-  // 2. Interact with payment gateway (Example: Stripe)
-  let paymentGatewayId = "";
-  let clientSecret = "";
+  // Generate a clean summary of rented titles for the Stripe checkout screen
+  const itemsSummary = order.items
+    .map((item) => `${item.gear.title} (x${item.quantity})`)
+    .join(", ");
 
-  if (gateway === "STRIPE") {
-    // Stripe expects amounts in cents/poisha (Float * 100)
-    const intent = await stripeMock.paymentIntents.create({
-      amount: Math.round(order.totalAmount * 100),
-      currency: "usd",
-      metadata: { orderId: order.id, customerId: userId },
-    });
+  const productName =
+    itemsSummary.length > 0
+      ? `Rental: ${itemsSummary}`
+      : `Rental Order #${order.id.slice(0, 8)}`;
 
-    paymentGatewayId = intent.id;
-    clientSecret = intent.client_secret;
-  } else if (gateway === "SSLCOMMERZ") {
-    // Handle SSLCommerz session creation logic here...
-    paymentGatewayId = `ssl_${Math.random().toString(36).substring(2, 11)}`;
-    clientSecret = "https://sandbox.sslcommerz.com/gwprocess/...";
-  }
+  // Create Stripe Checkout Session
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          unit_amount: Math.round(order.totalAmount * 100), // Converted to cents safely
+          product_data: {
+            name: productName,
+          },
+        },
+        quantity: 1,
+      },
+    ],
+    metadata: {
+      orderId: order.id,
+      customerId: userId,
+    },
+    success_url: `${config.client_url}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${config.client_url}/payment/cancel`,
+  });
 
-  // 3. Create or Update a pending Payment tracking entry in your system
+  // Upsert the tracking record into the 'payments' table using the session ID
   await prisma.payment.upsert({
-    where: { orderId: order.id },
+    where: {
+      orderId: order.id,
+    },
     update: {
-      gateway,
-      transactionId: paymentGatewayId,
+      gateway: "STRIPE",
+      transactionId: session.id,
       amount: order.totalAmount,
       status: "PENDING",
     },
     create: {
       orderId: order.id,
-      gateway,
-      transactionId: paymentGatewayId,
+      gateway: "STRIPE",
+      transactionId: session.id,
       amount: order.totalAmount,
       status: "PENDING",
     },
   });
 
   return {
-    transactionId: paymentGatewayId,
-    clientSecret, // Used by frontend to mount payment inputs
-    totalAmount: order.totalAmount,
+    checkoutUrl: session.url,
+    sessionId: session.id,
   };
 };
 
-const confirmPaymentWebhook = async (event: any) => {
-  // Extract essential payment info passed from gateway
-  // NOTE: Real Stripe webhooks require verifying signature headers using stripe.webhooks.constructEvent()
-  if (event.type === "payment_intent.succeeded") {
-    const paymentIntent = event.data.object;
-    const orderId = paymentIntent.metadata.orderId;
-    const transactionId = paymentIntent.id;
+const confirmPaymentWebhook = async (signature: string, rawBody: Buffer) => {
+  const event = stripe.webhooks.constructEvent(
+    rawBody,
+    signature,
+    config.stripe_webhook_secret,
+  );
+  console.log("Received Stripe webhook event:", event.type);
 
-    // Use transaction to ensure order and payment state match up atomically
-    return await prisma.$transaction(async (tx) => {
-      // 1. Update your payments table entry
-      const updatedPayment = await tx.payment.update({
-        where: { transactionId: transactionId },
+  switch (event.type) {
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      console.log("Checkout session completed:", session);
+
+      const orderId = session.metadata?.orderId;
+      console.log("Order ID from metadata:", orderId);
+
+      if (!orderId) {
+        throw new Error("Order ID missing");
+      }
+
+      return await prisma.$transaction(async (tx) => {
+        const payment = await tx.payment.update({
+          where: {
+            transactionId: session.id,
+          },
+
+          data: {
+            status: "PAID",
+
+            gatewayPayload: JSON.parse(JSON.stringify(session)),
+          },
+        });
+
+        await tx.order.update({
+          where: {
+            id: orderId,
+          },
+
+          data: {
+            paymentStatus: "PAID",
+            status: "CONFIRMED",
+            transactionId: session.payment_intent?.toString(),
+          },
+        });
+
+        return payment;
+      });
+    }
+
+    case "checkout.session.expired": {
+      const session = event.data.object as Stripe.Checkout.Session;
+
+      await prisma.payment.updateMany({
+        where: {
+          transactionId: session.id,
+        },
+
         data: {
-          status: "PAID",
-          gatewayPayload: event, // Logs full signature response logs for auditing
+          status: "FAILED",
         },
       });
 
-      // 2. Transition your rental order states securely
-      await tx.order.update({
-        where: { id: orderId },
-        data: {
-          status: "CONFIRMED", // Order moves from PLACED -> CONFIRMED
-          paymentStatus: "PAID",
-          transactionId: transactionId,
-        },
-      });
+      break;
+    }
 
-      return updatedPayment;
-    });
+    default:
+      console.log(`Unhandled event ${event.type}`);
   }
 
-  throw new Error("Unhandled webhook event type");
+  return {
+    received: true,
+  };
 };
 
 const getPaymentHistory = async (userId: string) => {
@@ -129,7 +190,6 @@ const getPaymentHistory = async (userId: string) => {
     orderBy: { createdAt: "desc" },
   });
 };
-
 const getPaymentDetails = async (paymentId: string, userId: string) => {
   if (!paymentId) {
     throw new Error("Payment record ID is required");
@@ -152,7 +212,6 @@ const getPaymentDetails = async (paymentId: string, userId: string) => {
 
   return payment;
 };
-
 export const paymentServices = {
   createPaymentIntent,
   confirmPaymentWebhook,

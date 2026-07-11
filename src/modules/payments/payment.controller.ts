@@ -22,7 +22,6 @@ const createPaymentIntent = catchAsync(
     });
   },
 );
-
 const confirmPaymentWebhook = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const webhookEvent = req.body;
@@ -37,7 +36,6 @@ const confirmPaymentWebhook = catchAsync(
     });
   },
 );
-
 const getPaymentHistory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user.id;
@@ -52,7 +50,6 @@ const getPaymentHistory = catchAsync(
     });
   },
 );
-
 const getPaymentDetails = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user.id;
