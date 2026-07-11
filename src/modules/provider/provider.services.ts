@@ -52,7 +52,6 @@ const updateGear = async (gearId: string, providerId: string, payload: any) => {
     throw new Error("Gear ID is required");
   }
 
-  // Security Verification: Ensure this gear item belongs to the requesting provider
   const existingGear = await prisma.gear.findUnique({
     where: { id: gearId },
   });
@@ -88,14 +87,12 @@ const deleteGear = async (gearId: string, providerId: string) => {
     throw new Error("Unauthorized to remove this gear listing");
   }
 
-  // Cascade settings in your schema will automatically handle cleaning up children records if safe
   return await prisma.gear.delete({
     where: { id: gearId },
   });
 };
 
 const getGearOrders = async (providerId: string) => {
-  // Fetches orders that contain at least one item belonging to this specific provider
   return await prisma.order.findMany({
     where: {
       items: {
@@ -112,7 +109,7 @@ const getGearOrders = async (providerId: string) => {
       },
       items: {
         where: {
-          gear: { providerId: providerId }, // Isolates line items belonging only to this vendor
+          gear: { providerId: providerId },
         },
         include: {
           gear: true,
@@ -133,7 +130,6 @@ const updateGearOrder = async (
     throw new Error("Order ID is required");
   }
 
-  // Verify the order contains items from this provider before executing a status shift
   const matchingOrderItem = await prisma.orderItem.findFirst({
     where: {
       orderId,
@@ -145,7 +141,6 @@ const updateGearOrder = async (
     throw new Error("Unauthorized to update status for this rental request");
   }
 
-  // Transitions order status through your mapped engine: CONFIRMED -> PICKED_UP -> RETURNED
   return await prisma.order.update({
     where: { id: orderId },
     data: { status },

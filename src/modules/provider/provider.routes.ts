@@ -7,17 +7,9 @@ const router = Router();
 
 router.post("/gear", auth(Role.PROVIDER), providerController.createGear);
 
-router.put(
-  "/gear/:id",
-  auth(Role.PROVIDER, Role.ADMIN),
-  providerController.updateGear,
-);
+router.put("/gear/:id", auth(Role.PROVIDER), providerController.updateGear);
 
-router.delete(
-  "/gear/:id",
-  auth(Role.PROVIDER, Role.ADMIN),
-  providerController.deleteGear,
-);
+router.delete("/gear/:id", auth(Role.PROVIDER), providerController.deleteGear);
 
 router.get("/orders", auth(Role.PROVIDER), providerController.getGearOrders);
 
@@ -29,13 +21,13 @@ router.patch(
 
 router.post(
   "/gear/category",
-  auth(Role.PROVIDER, Role.ADMIN),
+  auth(Role.PROVIDER),
   providerController.createCategory,
 );
 
 router.get(
   "/gear/category",
-  auth(Role.PROVIDER, Role.ADMIN),
+  auth(Role.PROVIDER),
   providerController.getCategories,
 );
 
