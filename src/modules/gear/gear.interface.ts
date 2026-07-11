@@ -14,3 +14,12 @@ export interface ICategory {
   slug: string;
   description?: string;
 }
+export interface IGearFilters {
+  categoryName?: string;
+  searchTerm?: string;
+  categoryId?: string;
+  brand?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  isAvailable?: string;
+}

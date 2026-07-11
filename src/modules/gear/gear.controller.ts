@@ -6,15 +6,14 @@ import { gearServices } from "./gear.services";
 
 const getAllGears = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const createdGear = await gearServices.getAllGears();
+    const filters = req.query;
+    const gears = await gearServices.getAllGears(filters);
 
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Gear created successfully",
-      data: {
-        ...createdGear,
-      },
+      message: "Gears retrieved successfully",
+      data: gears,
     });
   },
 );
