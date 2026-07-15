@@ -4,7 +4,7 @@ import { Role } from "../users/user.interface";
 import { auth } from "../../middlewares/auth";
 import validateRequest from "../../middlewares/zodValidationRequest";
 import { updateGearSchema } from "../gear/gear.schema";
-import { updateOrderStatusSchema } from "./provider.schema";
+import { categorySchema, updateOrderStatusSchema } from "./provider.schema";
 
 const router = Router();
 
@@ -31,6 +31,7 @@ router.patch(
 router.post(
   "/gear/category",
   auth(Role.PROVIDER),
+  validateRequest(categorySchema),
   providerController.createCategory,
 );
 
