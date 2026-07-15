@@ -2,10 +2,16 @@ import { Router } from "express";
 import { userController } from "./user.controller";
 import { auth } from "../../middlewares/auth";
 import { Role } from "./user.interface";
+import validateRequest from "../../middlewares/zodValidationRequest";
+import { registerSchema } from "./user.schema";
 
 const router = Router();
 
-router.post("/register", userController.registerUser);
+router.post(
+  "/register",
+  validateRequest(registerSchema),
+  userController.registerUser,
+);
 
 router.patch(
   "/profile",
