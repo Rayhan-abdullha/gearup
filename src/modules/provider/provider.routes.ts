@@ -3,12 +3,17 @@ import { providerController } from "./provider.controller";
 import { Role } from "../users/user.interface";
 import { auth } from "../../middlewares/auth";
 import validateRequest from "../../middlewares/zodValidationRequest";
-import { updateGearSchema } from "../gear/gear.schema";
+import { createGearSchema, updateGearSchema } from "../gear/gear.schema";
 import { categorySchema, updateOrderStatusSchema } from "./provider.schema";
 
 const router = Router();
 
-router.post("/gear", auth(Role.PROVIDER), providerController.createGear);
+router.post(
+  "/gear",
+  auth(Role.PROVIDER),
+  validateRequest(createGearSchema),
+  providerController.createGear,
+);
 
 router.put(
   "/gear/:id",
