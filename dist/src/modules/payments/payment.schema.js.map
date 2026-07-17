@@ -1,0 +1,1 @@
+{"version":3,"file":"payment.schema.js","sourceRoot":"","sources":["../../../../src/modules/payments/payment.schema.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,CAAC,EAAE,MAAM,KAAK,CAAC;AACxB,MAAM,CAAC,MAAM,yBAAyB,GAAG,CAAC,CAAC,MAAM,CAAC;IAChD,IAAI,EAAE,CAAC,CAAC,MAAM,CAAC;QACb,OAAO,EAAE,CAAC,CAAC,MAAM,EAAE,CAAC,IAAI,CAAC,yBAAyB,CAAC;KACpD,CAAC;CACH,CAAC,CAAC"}
