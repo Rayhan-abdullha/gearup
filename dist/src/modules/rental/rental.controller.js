@@ -34,9 +34,22 @@ const getRentalDetails = catchAsync(async (req, res, next) => {
         data: result,
     });
 });
+const updateRentalOrder = catchAsync(async (req, res, next) => {
+    const orderId = req.params.id;
+    const providerId = req.user.id;
+    const { status } = req.body; // Expects {"status": "RETURNED"}
+    const result = await rentalServices.updateRentalOrder(orderId, providerId, status);
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: `Rental status updated to ${status} successfully`,
+        data: result,
+    });
+});
 export const rentalControllers = {
     createRentalOrder,
     getUserRentals,
     getRentalDetails,
+    updateRentalOrder,
 };
 //# sourceMappingURL=rental.controller.js.map

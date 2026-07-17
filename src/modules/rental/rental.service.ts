@@ -1,5 +1,6 @@
 import { IRentalOrderInput } from "./rental.interface";
 import { prisma } from "../../lib/prisma";
+import { OrderStatus } from "../provider/provider.interface";
 
 const createRentalOrder = async (
   userId: string,
@@ -114,8 +115,68 @@ const getRentalDetails = async (orderId: string, userId: string) => {
   return order;
 };
 
+const updateRentalOrder = async (
+  orderId: string,
+  customerId: string,
+  status: OrderStatus,
+) => {
+  if (!orderId) {
+    throw new Error("Order ID is required");
+  }
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  const matchingOrderItem = await prisma.orderItem.findFirst({
+    where: {
+      orderId,
+      order: {
+        customerId,
+      },
+    },
+  });
+
+  if (!matchingOrderItem) {
+    throw new Error("Unauthorized to update status for this rental request");
+  }
+
+  if (order.status === "RETURNED") {
+    throw new Error("This order has already been returned and closed out.");
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    if (status === "RETURNED") {
+      for (const item of order.items) {
+        await tx.gear.update({
+          where: { id: item.gearId },
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+      }
+    }
+
+    // Update and return the final order status
+    const updatedOrder = await tx.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+
+    return updatedOrder;
+  });
+};
+
 export const rentalServices = {
   createRentalOrder,
   getUserRentals,
   getRentalDetails,
+  updateRentalOrder,
 };

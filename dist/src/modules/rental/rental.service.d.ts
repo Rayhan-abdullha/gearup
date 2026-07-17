@@ -1,4 +1,5 @@
 import { IRentalOrderInput } from "./rental.interface";
+import { OrderStatus } from "../provider/provider.interface";
 export declare const rentalServices: {
     createRentalOrder: (userId: string, payload: IRentalOrderInput) => Promise<{
         items: {
@@ -82,6 +83,16 @@ export declare const rentalServices: {
             gatewayPayload: import("@prisma/client/runtime/client").JsonValue | null;
         } | null;
     } & {
+        id: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        totalAmount: number;
+        paymentStatus: import("../../../generated/prisma/enums").PaymentStatus;
+        transactionId: string | null;
+        customerId: string;
+    }>;
+    updateRentalOrder: (orderId: string, customerId: string, status: OrderStatus) => Promise<{
         id: string;
         status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;

@@ -24,4 +24,9 @@ router.get(
   rentalControllers.getRentalDetails,
 );
 
+router.patch(
+  "/orders/:id",
+  auth(Role.CUSTOMER),
+  rentalControllers.updateRentalOrder,
+);
 export default router;
