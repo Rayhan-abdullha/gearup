@@ -7,6 +7,7 @@ import { providerServices } from "./provider.services";
 const createGear = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
+    console.log("Payload received in createGear:", payload);
 
     const createdGear = await providerServices.createGear({
       ...payload,

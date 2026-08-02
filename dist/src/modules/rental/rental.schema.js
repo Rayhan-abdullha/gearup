@@ -5,14 +5,8 @@ export const createRentalSchema = z.object({
             .array(z.object({
             gearId: z.string().uuid("Invalid gear selection ID"),
             quantity: z.number().int().positive("Quantity must be at least 1"),
-            startDate: z
-                .string()
-                .datetime({
-                message: "Start date must be an ISO 8601 date string",
-            }),
-            endDate: z
-                .string()
-                .datetime({ message: "End date must be an ISO 8601 date string" }),
+            startDate: z.string(),
+            endDate: z.string(),
         }))
             .min(1, "At least one gear item must be rented"),
     }),

@@ -14,12 +14,12 @@ export interface ICategory {
     description?: string;
 }
 export interface IGearFilters {
-    categoryName?: string;
+    category?: string[];
     searchTerm?: string;
     categoryId?: string;
-    brand?: string;
+    brand?: string[];
     minPrice?: string;
     maxPrice?: string;
-    isAvailable?: string;
+    isAvailable?: undefined | "true" | "false";
 }
 //# sourceMappingURL=gear.interface.d.ts.map

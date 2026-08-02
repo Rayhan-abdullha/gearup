@@ -44,9 +44,21 @@ const updateGear = async (gearId, providerId, payload) => {
     if (existingGear.providerId !== providerId) {
         throw new Error("Unauthorized to modify this gear listing");
     }
+    const updatedGear = {
+        id: existingGear.id,
+        title: payload.title ?? existingGear.title,
+        description: payload.description ?? existingGear.description,
+        brand: payload.brand ?? existingGear.brand,
+        specifications: payload.specifications ?? existingGear.specifications,
+        pricePerDay: payload.pricePerDay ?? existingGear.pricePerDay,
+        stock: payload.stock ?? existingGear.stock,
+        isAvailable: payload.isAvailable ?? existingGear.isAvailable,
+        providerId: existingGear.providerId,
+        categoryId: payload.categoryId ?? existingGear.categoryId,
+    };
     return await prisma.gear.update({
         where: { id: gearId },
-        data: payload,
+        data: updatedGear,
     });
 };
 const deleteGear = async (gearId, providerId) => {

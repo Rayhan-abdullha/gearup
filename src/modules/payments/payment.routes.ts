@@ -23,7 +23,7 @@ router.post(
 );
 router.get(
   "/",
-  auth(Role.ADMIN, Role.PROVIDER),
+  auth(Role.ADMIN, Role.PROVIDER, Role.CUSTOMER),
   paymentControllers.getPaymentHistory,
 );
 router.get(

@@ -12,7 +12,7 @@ router.post("/webhook", async (req, res) => {
     res.sendStatus(200);
 });
 router.post("/create", auth(Role.ADMIN, Role.PROVIDER, Role.CUSTOMER), zodValidationRequest(createPaymentIntentSchema), paymentControllers.createPaymentIntent);
-router.get("/", auth(Role.ADMIN, Role.PROVIDER), paymentControllers.getPaymentHistory);
+router.get("/", auth(Role.ADMIN, Role.PROVIDER, Role.CUSTOMER), paymentControllers.getPaymentHistory);
 router.get("/:id", auth(Role.ADMIN, Role.PROVIDER), paymentControllers.getPaymentDetails);
 export default router;
 //# sourceMappingURL=payment.routes.js.map

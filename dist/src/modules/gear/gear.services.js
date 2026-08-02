@@ -1,57 +1,100 @@
 import { prisma } from "../../lib/prisma";
 const getAllGears = async (filters) => {
-    const { searchTerm, categoryId, categoryName, brand, minPrice, maxPrice, isAvailable, } = filters;
+    const { searchTerm, categoryId, category, brand, minPrice, maxPrice, isAvailable, } = filters;
     const andConditions = [];
-    if (searchTerm) {
+    // Search
+    if (searchTerm?.trim()) {
         andConditions.push({
             OR: [
-                { title: { contains: searchTerm, mode: "insensitive" } },
-                { brand: { contains: searchTerm, mode: "insensitive" } },
-                { description: { contains: searchTerm, mode: "insensitive" } },
+                {
+                    title: {
+                        contains: searchTerm.trim(),
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    brand: {
+                        contains: searchTerm.trim(),
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    description: {
+                        contains: searchTerm.trim(),
+                        mode: "insensitive",
+                    },
+                },
             ],
         });
     }
+    // Category ID
     if (categoryId) {
-        andConditions.push({ categoryId });
+        andConditions.push({
+            categoryId,
+        });
     }
-    if (categoryName) {
+    // Categories
+    // category = ["Water Sports", "Cycling", "Camping"]
+    if (category?.length) {
         andConditions.push({
             category: {
-                slug: {
-                    equals: categoryName.toLowerCase(),
+                name: {
+                    in: category,
                     mode: "insensitive",
                 },
             },
         });
     }
-    if (brand) {
+    // Brands
+    // brand = ["gear", "test"]
+    if (brand?.length) {
         andConditions.push({
-            brand: { equals: brand, mode: "insensitive" },
+            OR: brand.map((item) => ({
+                brand: {
+                    equals: item,
+                    mode: "insensitive",
+                },
+            })),
         });
     }
+    // Availability
+    // isAvailable = "true" / "false"
     if (isAvailable !== undefined) {
         andConditions.push({
             isAvailable: isAvailable === "true",
         });
     }
-    if (minPrice || maxPrice) {
+    // Price range
+    if (minPrice !== undefined || maxPrice !== undefined) {
         const priceCondition = {};
-        if (minPrice)
-            priceCondition.gte = parseFloat(minPrice);
-        if (maxPrice)
-            priceCondition.lte = parseFloat(maxPrice);
-        andConditions.push({ pricePerDay: priceCondition });
+        if (minPrice !== undefined) {
+            priceCondition.gte = Number(minPrice);
+        }
+        if (maxPrice !== undefined) {
+            priceCondition.lte = Number(maxPrice);
+        }
+        andConditions.push({
+            pricePerDay: priceCondition,
+        });
     }
-    // Combine conditions into final query constraint layout
-    const whereConditions = andConditions.length > 0 ? { AND: andConditions } : {};
+    const where = andConditions.length > 0
+        ? {
+            AND: andConditions,
+        }
+        : {};
     const gears = await prisma.gear.findMany({
-        where: whereConditions,
+        where,
         include: {
             category: {
-                select: { name: true, slug: true },
+                select: {
+                    name: true,
+                    slug: true,
+                },
             },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: {
+            createdAt: "desc",
+        },
     });
     return gears;
 };

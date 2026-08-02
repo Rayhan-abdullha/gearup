@@ -6,7 +6,7 @@ import validateZodRequest from "../../middlewares/zodValidationRequest";
 import { createRentalSchema } from "./rental.schema";
 const router = Router();
 router.post("/", auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER), validateZodRequest(createRentalSchema), rentalControllers.createRentalOrder);
-router.get("/", auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER), rentalControllers.getUserRentals);
+router.get("/me", auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER), rentalControllers.getUserRentals);
 router.get("/:id", auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER), rentalControllers.getRentalDetails);
 router.patch("/orders/:id", auth(Role.CUSTOMER), rentalControllers.updateRentalOrder);
 export default router;

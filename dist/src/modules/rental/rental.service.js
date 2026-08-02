@@ -37,7 +37,7 @@ const createRentalOrder = async (userId, payload) => {
             data: {
                 customerId: userId,
                 totalAmount: calculatedTotalAmount,
-                status: "PENDING",
+                status: "PLACED",
                 paymentStatus: "PENDING",
                 items: {
                     create: orderItemsData,

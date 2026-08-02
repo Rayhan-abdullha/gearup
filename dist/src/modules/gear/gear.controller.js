@@ -23,15 +23,12 @@ const getSingleGear = catchAsync(async (req, res, next) => {
     });
 });
 const getCategories = catchAsync(async (req, res, next) => {
-    console.log("getCategories called");
     const categories = await gearServices.getCategories();
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
         message: "Categories fetched successfully",
-        data: {
-            ...categories,
-        },
+        data: categories,
     });
 });
 export const gearController = {

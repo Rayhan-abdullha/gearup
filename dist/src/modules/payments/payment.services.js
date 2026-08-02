@@ -57,7 +57,7 @@ const createPaymentIntent = async (userId, payload) => {
             orderId: order.id,
             customerId: userId,
         },
-        success_url: `${config.client_url}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${config.client_url}/customer-dashboard/rentals?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${config.client_url}/payment/cancel`,
     });
     // Upsert the tracking record into the 'payments' table using the session ID

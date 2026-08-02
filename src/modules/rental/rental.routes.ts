@@ -14,7 +14,7 @@ router.post(
   rentalControllers.createRentalOrder,
 );
 router.get(
-  "/",
+  "/me",
   auth(Role.CUSTOMER, Role.ADMIN, Role.PROVIDER),
   rentalControllers.getUserRentals,
 );
