@@ -46,7 +46,16 @@ const getAllGears = async (filters: IGearFilters) => {
     });
   }
 
-  if (category?.length) {
+  if (typeof category === "string") {
+    andConditions.push({
+      category: {
+        name: {
+          equals: category,
+          mode: "insensitive",
+        },
+      },
+    });
+  } else if (category?.length) {
     andConditions.push({
       category: {
         name: {
@@ -57,7 +66,14 @@ const getAllGears = async (filters: IGearFilters) => {
     });
   }
 
-  if (brand?.length) {
+  if (brand && typeof brand === "string") {
+    andConditions.push({
+      brand: {
+        equals: brand,
+        mode: "insensitive",
+      },
+    });
+  } else if (brand?.length) {
     andConditions.push({
       OR: brand.map((item: string) => ({
         brand: {
