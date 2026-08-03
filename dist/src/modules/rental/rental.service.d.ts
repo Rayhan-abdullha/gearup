@@ -1,5 +1,4 @@
 import { IRentalOrderInput } from "./rental.interface";
-import { OrderStatus } from "../provider/provider.interface";
 export declare const rentalServices: {
     createRentalOrder: (userId: string, payload: IRentalOrderInput) => Promise<{
         items: {
@@ -36,6 +35,16 @@ export declare const rentalServices: {
             orderId: string;
             gearId: string;
         })[];
+        review: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            customerId: string;
+            orderId: string;
+            gearId: string;
+            rating: number;
+            comment: string | null;
+        } | null;
     } & {
         id: string;
         status: import("../../../generated/prisma/enums").OrderStatus;
@@ -92,7 +101,7 @@ export declare const rentalServices: {
         transactionId: string | null;
         customerId: string;
     }>;
-    updateRentalOrder: (orderId: string, customerId: string, status: OrderStatus) => Promise<{
+    updateRentalOrder: (orderId: string, customerId: string, status: "RETURNED" | "CANCELLED") => Promise<{
         id: string;
         status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;

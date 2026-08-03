@@ -137,10 +137,14 @@ const getGearOrders = async (providerId: string) => {
 const updateGearOrder = async (
   orderId: string,
   providerId: string,
-  status: OrderStatus,
+  status: "CONFIRMED" | "PICKED_UP" | "CANCELLED",
 ) => {
   if (!orderId) {
     throw new Error("Order ID is required");
+  }
+
+  if (!status) {
+    throw new Error("Status is required");
   }
 
   const order = await prisma.order.findUnique({
@@ -168,26 +172,34 @@ const updateGearOrder = async (
   }
 
   return await prisma.$transaction(async (tx) => {
-    if (status === "RETURNED") {
-      for (const item of order.items) {
-        await tx.gear.update({
-          where: { id: item.gearId },
-          data: {
-            stock: {
-              increment: item.quantity,
-            },
-          },
-        });
-      }
+    if (
+      status === "CONFIRMED" ||
+      status === "PICKED_UP" ||
+      status === "CANCELLED"
+    ) {
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status },
+      });
+      return updatedOrder;
     }
 
-    // Update and return the final order status
-    const updatedOrder = await tx.order.update({
-      where: { id: orderId },
-      data: { status },
-    });
-
-    return updatedOrder;
+    // if cancell increment stock
+    if (status === "CANCELLED") {
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { status },
+      });
+      await tx.gear.update({
+        where: { id: matchingOrderItem.gearId },
+        data: {
+          stock: {
+            increment: matchingOrderItem.quantity,
+          },
+        },
+      });
+      return updatedOrder;
+    }
   });
 };
 const createCategory = async (payload: ICategory) => {
@@ -214,6 +226,85 @@ const getCategories = async () => {
   return categories;
 };
 
+const getProviderOverview = async (providerId: string) => {
+  const result = await prisma.$transaction(async (tx) => {
+    const totalGearListed = await tx.gear.count({
+      where: { providerId },
+    });
+
+    const activeRentals = await tx.order.count({
+      where: {
+        status: "PLACED",
+        items: {
+          some: {
+            gear: {
+              providerId,
+            },
+          },
+        },
+      },
+    });
+
+    const pendingOrders = await tx.order.count({
+      where: {
+        status: "PENDING",
+        items: {
+          some: {
+            gear: {
+              providerId,
+            },
+          },
+        },
+      },
+    });
+
+    const revenue = await tx.order.aggregate({
+      _sum: {
+        totalAmount: true,
+      },
+      where: {
+        status: "RETURNED",
+        items: {
+          some: {
+            gear: {
+              providerId,
+            },
+          },
+        },
+      },
+    });
+
+    // recent orders
+    const orders = await tx.order.findMany({
+      where: {
+        items: {
+          some: {
+            gear: {
+              providerId,
+            },
+          },
+        },
+      },
+      include: {
+        customer: {
+          select: { id: true, name: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+
+    return {
+      totalGearListed,
+      activeRentals,
+      pendingOrders,
+      revenue,
+      recentOrders: orders,
+    };
+  });
+
+  return result;
+};
 export const providerServices = {
   createGear,
   createCategory,
@@ -222,4 +313,5 @@ export const providerServices = {
   deleteGear,
   getGearOrders,
   updateGearOrder,
+  getProviderOverview,
 };

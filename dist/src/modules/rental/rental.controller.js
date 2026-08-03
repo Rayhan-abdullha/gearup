@@ -36,9 +36,9 @@ const getRentalDetails = catchAsync(async (req, res, next) => {
 });
 const updateRentalOrder = catchAsync(async (req, res, next) => {
     const orderId = req.params.id;
-    const providerId = req.user.id;
+    const customerId = req.user.id;
     const { status } = req.body; // Expects {"status": "RETURNED"}
-    const result = await rentalServices.updateRentalOrder(orderId, providerId, status);
+    const result = await rentalServices.updateRentalOrder(orderId, customerId, status);
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,

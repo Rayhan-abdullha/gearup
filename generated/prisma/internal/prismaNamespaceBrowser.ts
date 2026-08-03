@@ -174,6 +174,7 @@ export const ReviewScalarFieldEnum = {
   comment: 'comment',
   customerId: 'customerId',
   gearId: 'gearId',
+  orderId: 'orderId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

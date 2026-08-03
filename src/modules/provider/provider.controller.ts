@@ -129,6 +129,19 @@ const getCategories = catchAsync(
     });
   },
 );
+
+const getOverview = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const providerId = (req as any).user.id;
+    const overview = await providerServices.getProviderOverview(providerId);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Overview fetched successfully",
+      data: overview,
+    });
+  },
+);
 export const providerController = {
   createGear,
   createCategory,
@@ -137,4 +150,5 @@ export const providerController = {
   deleteGear,
   getGearOrders,
   updateGearOrder,
+  getOverview,
 };

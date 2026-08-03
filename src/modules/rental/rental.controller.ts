@@ -53,12 +53,12 @@ const getRentalDetails = catchAsync(
 const updateRentalOrder = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const orderId = req.params.id as string;
-    const providerId = (req as any).user.id;
+    const customerId = (req as any).user.id;
     const { status } = req.body; // Expects {"status": "RETURNED"}
 
     const result = await rentalServices.updateRentalOrder(
       orderId,
-      providerId,
+      customerId,
       status,
     );
 

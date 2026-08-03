@@ -13,5 +13,7 @@ router.get("/orders", auth(Role.PROVIDER), providerController.getGearOrders);
 router.patch("/orders/:id", auth(Role.PROVIDER), validateRequest(updateOrderStatusSchema), providerController.updateGearOrder);
 router.post("/gear/category", auth(Role.PROVIDER), validateRequest(categorySchema), providerController.createCategory);
 router.get("/gear/category", auth(Role.PROVIDER), providerController.getCategories);
+// provider overview
+router.get("/overview", auth(Role.PROVIDER), providerController.getOverview);
 export const providerRoutes = router;
 //# sourceMappingURL=provider.routes.js.map

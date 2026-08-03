@@ -6,10 +6,15 @@ import { sendResponse } from "../../utils/sendResponse";
 
 const createReview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const customerId = (req as any).user.id; // Pulled from your active session middleware token
+    const customerId = (req as any).user.id;
+    const orderId = req.params.id as string;
     const reviewData = req.body;
 
-    const result = await reviewServices.createReview(customerId, reviewData);
+    const result = await reviewServices.createReview(
+      customerId,
+      orderId,
+      reviewData,
+    );
 
     sendResponse(res, {
       success: true,

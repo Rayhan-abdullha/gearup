@@ -960,6 +960,7 @@ export declare const ReviewScalarFieldEnum: {
     readonly comment: "comment";
     readonly customerId: "customerId";
     readonly gearId: "gearId";
+    readonly orderId: "orderId";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };

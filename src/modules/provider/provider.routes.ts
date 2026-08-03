@@ -46,4 +46,6 @@ router.get(
   providerController.getCategories,
 );
 
+// provider overview
+router.get("/overview", auth(Role.PROVIDER), providerController.getOverview);
 export const providerRoutes = router;

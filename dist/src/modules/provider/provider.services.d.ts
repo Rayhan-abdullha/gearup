@@ -1,5 +1,4 @@
 import { IGear, ICategory } from "./provider.interface";
-import { OrderStatus } from "./provider.interface";
 export declare const providerServices: {
     createGear: (payload: IGear) => Promise<{
         id: string;
@@ -110,7 +109,7 @@ export declare const providerServices: {
         transactionId: string | null;
         customerId: string;
     })[]>;
-    updateGearOrder: (orderId: string, providerId: string, status: OrderStatus) => Promise<{
+    updateGearOrder: (orderId: string, providerId: string, status: "CONFIRMED" | "PICKED_UP" | "CANCELLED") => Promise<{
         id: string;
         status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
@@ -119,6 +118,41 @@ export declare const providerServices: {
         paymentStatus: import("../../../generated/prisma/enums").PaymentStatus;
         transactionId: string | null;
         customerId: string;
+    } | undefined>;
+    getProviderOverview: (providerId: string) => Promise<{
+        totalGearListed: number;
+        activeRentals: number;
+        pendingOrders: number;
+        revenue: import("../../../generated/prisma/models").GetOrderAggregateType<{
+            _sum: {
+                totalAmount: true;
+            };
+            where: {
+                status: "RETURNED";
+                items: {
+                    some: {
+                        gear: {
+                            providerId: string;
+                        };
+                    };
+                };
+            };
+        }>;
+        recentOrders: ({
+            customer: {
+                id: string;
+                name: string;
+            };
+        } & {
+            id: string;
+            status: import("../../../generated/prisma/enums").OrderStatus;
+            createdAt: Date;
+            updatedAt: Date;
+            totalAmount: number;
+            paymentStatus: import("../../../generated/prisma/enums").PaymentStatus;
+            transactionId: string | null;
+            customerId: string;
+        })[];
     }>;
 };
 //# sourceMappingURL=provider.services.d.ts.map

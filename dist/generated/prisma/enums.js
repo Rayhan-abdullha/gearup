@@ -19,6 +19,7 @@ export const UserStatus = {
 export const OrderStatus = {
     PENDING: 'PENDING',
     PLACED: 'PLACED',
+    PAID: 'PAID',
     CONFIRMED: 'CONFIRMED',
     PICKED_UP: 'PICKED_UP',
     RETURNED: 'RETURNED',

@@ -4,15 +4,15 @@ model Order {
   status        OrderStatus   @default(PENDING)
   paymentStatus PaymentStatus @default(PENDING)
   transactionId String?       @unique
-  
   customerId    String
-  
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
   customer      User          @relation("CustomerOrders", fields: [customerId], references: [id], onDelete: Cascade)
   items         OrderItem[]
   payment       Payment?
+  review        Review?
 
   @@index([customerId])
   @@map("orders")

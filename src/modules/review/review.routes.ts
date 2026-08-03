@@ -8,7 +8,7 @@ import { createReviewSchema } from "./review.schema";
 const router = Router();
 
 router.post(
-  "/",
+  "/orders/:id",
   auth(Role.CUSTOMER),
   validateRequest(createReviewSchema),
   reviewController.createReview,

@@ -33,6 +33,7 @@ export declare const gearServices: {
             createdAt: Date;
             updatedAt: Date;
             customerId: string;
+            orderId: string;
             gearId: string;
             rating: number;
             comment: string | null;

@@ -47,6 +47,13 @@ const createRentalOrder = async (userId, payload) => {
                 items: true,
             },
         });
+        // Reduce stock for each item
+        for (const item of payload.items) {
+            await tx.gear.update({
+                where: { id: item.gearId },
+                data: { stock: { decrement: item.quantity } },
+            });
+        }
         return newOrder;
     });
 };
@@ -54,10 +61,14 @@ const getUserRentals = async (userId) => {
     const rentals = await prisma.order.findMany({
         where: { customerId: userId },
         include: {
+            review: true,
             items: {
                 include: {
                     gear: {
-                        select: { title: true, brand: true },
+                        select: {
+                            title: true,
+                            brand: true,
+                        },
                     },
                 },
             },
@@ -94,6 +105,9 @@ const updateRentalOrder = async (orderId, customerId, status) => {
     if (!orderId) {
         throw new Error("Order ID is required");
     }
+    if (!status) {
+        throw new Error("Status is required");
+    }
     const order = await prisma.order.findUnique({
         where: { id: orderId },
         include: { items: true },
@@ -116,7 +130,7 @@ const updateRentalOrder = async (orderId, customerId, status) => {
         throw new Error("This order has already been returned and closed out.");
     }
     return await prisma.$transaction(async (tx) => {
-        if (status === "RETURNED") {
+        if (status === "CANCELLED" || status === "RETURNED") {
             for (const item of order.items) {
                 await tx.gear.update({
                     where: { id: item.gearId },

@@ -16,6 +16,7 @@ export interface ICategory {
 }
 export type OrderStatus =
   | "PENDING"
+  | "PAID"
   | "PLACED"
   | "CONFIRMED"
   | "PICKED_UP"

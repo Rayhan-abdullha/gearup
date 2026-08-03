@@ -86,6 +86,16 @@ const getCategories = catchAsync(async (req, res, next) => {
         },
     });
 });
+const getOverview = catchAsync(async (req, res, next) => {
+    const providerId = req.user.id;
+    const overview = await providerServices.getProviderOverview(providerId);
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Overview fetched successfully",
+        data: overview,
+    });
+});
 export const providerController = {
     createGear,
     createCategory,
@@ -94,5 +104,6 @@ export const providerController = {
     deleteGear,
     getGearOrders,
     updateGearOrder,
+    getOverview,
 };
 //# sourceMappingURL=provider.controller.js.map

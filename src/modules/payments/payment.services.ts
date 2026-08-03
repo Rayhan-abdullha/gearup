@@ -75,25 +75,31 @@ const createPaymentIntent = async (
     cancel_url: `${config.client_url}/payment/cancel`,
   });
 
-  // Upsert the tracking record into the 'payments' table using the session ID
-  await prisma.payment.upsert({
+  const payment = await prisma.payment.findUnique({
     where: {
       orderId: order.id,
     },
-    update: {
-      gateway: "STRIPE",
-      transactionId: session.id,
-      amount: order.totalAmount,
-      status: "PENDING",
-    },
-    create: {
-      orderId: order.id,
-      gateway: "STRIPE",
-      transactionId: session.id,
-      amount: order.totalAmount,
-      status: "PENDING",
-    },
   });
+  if (!payment) {
+    await prisma.payment.upsert({
+      where: {
+        orderId: order.id,
+      },
+      update: {
+        gateway: "STRIPE",
+        transactionId: session.id,
+        amount: order.totalAmount,
+        status: "PENDING",
+      },
+      create: {
+        orderId: order.id,
+        gateway: "STRIPE",
+        transactionId: session.id,
+        amount: order.totalAmount,
+        status: "PENDING",
+      },
+    });
+  }
 
   return {
     checkoutUrl: session.url,
@@ -136,7 +142,7 @@ const confirmPaymentWebhook = async (signature: string, rawBody: Buffer) => {
 
           data: {
             paymentStatus: "PAID",
-            status: "PLACED",
+            status: "PAID",
             transactionId: session.payment_intent?.toString(),
           },
         });

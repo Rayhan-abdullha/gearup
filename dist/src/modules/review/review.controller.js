@@ -3,9 +3,10 @@ import httpStatus from "http-status";
 import { reviewServices } from "./review.services";
 import { sendResponse } from "../../utils/sendResponse";
 const createReview = catchAsync(async (req, res, next) => {
-    const customerId = req.user.id; // Pulled from your active session middleware token
+    const customerId = req.user.id;
+    const orderId = req.params.id;
     const reviewData = req.body;
-    const result = await reviewServices.createReview(customerId, reviewData);
+    const result = await reviewServices.createReview(customerId, orderId, reviewData);
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,

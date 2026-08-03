@@ -7,5 +7,6 @@ export declare const providerController: {
     deleteGear: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     getGearOrders: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     updateGearOrder: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getOverview: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 //# sourceMappingURL=provider.controller.d.ts.map
