@@ -1063,6 +1063,7 @@ export const GearScalarFieldEnum = {
   pricePerDay: 'pricePerDay',
   stock: 'stock',
   isAvailable: 'isAvailable',
+  images: 'images',
   providerId: 'providerId',
   categoryId: 'categoryId',
   createdAt: 'createdAt',

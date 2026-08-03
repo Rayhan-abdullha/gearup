@@ -18,6 +18,7 @@ model Gear {
   pricePerDay  Float
   stock        Int      @default(1)
   isAvailable  Boolean  @default(true)
+  images       String[]
   
   providerId   String
   categoryId   String

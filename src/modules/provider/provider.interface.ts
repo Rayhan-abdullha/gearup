@@ -7,6 +7,7 @@ export interface IGear {
   stock?: number;
   providerId: string;
   categoryId: string;
+  images: string[];
 }
 
 export interface ICategory {

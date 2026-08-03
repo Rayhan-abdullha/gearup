@@ -73,6 +73,7 @@ export declare const rentalServices: {
                 pricePerDay: number;
                 stock: number;
                 isAvailable: boolean;
+                images: string[];
                 providerId: string;
                 categoryId: string;
             };

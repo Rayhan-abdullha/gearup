@@ -40,15 +40,12 @@ const getAllGears = async (filters: IGearFilters) => {
     });
   }
 
-  // Category ID
   if (categoryId) {
     andConditions.push({
       categoryId,
     });
   }
 
-  // Categories
-  // category = ["Water Sports", "Cycling", "Camping"]
   if (category?.length) {
     andConditions.push({
       category: {
@@ -60,8 +57,6 @@ const getAllGears = async (filters: IGearFilters) => {
     });
   }
 
-  // Brands
-  // brand = ["gear", "test"]
   if (brand?.length) {
     andConditions.push({
       OR: brand.map((item: string) => ({
@@ -73,8 +68,6 @@ const getAllGears = async (filters: IGearFilters) => {
     });
   }
 
-  // Availability
-  // isAvailable = "true" / "false"
   if (isAvailable !== undefined) {
     andConditions.push({
       isAvailable: isAvailable === "true",

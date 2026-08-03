@@ -899,6 +899,7 @@ export declare const GearScalarFieldEnum: {
     readonly pricePerDay: "pricePerDay";
     readonly stock: "stock";
     readonly isAvailable: "isAvailable";
+    readonly images: "images";
     readonly providerId: "providerId";
     readonly categoryId: "categoryId";
     readonly createdAt: "createdAt";

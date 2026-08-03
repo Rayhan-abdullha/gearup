@@ -5,6 +5,7 @@ export declare const createGearSchema: z.ZodObject<{
         description: z.ZodString;
         specifications: z.ZodOptional<z.ZodObject<{}, z.core.$strip>>;
         brand: z.ZodString;
+        images: z.ZodOptional<z.ZodArray<z.ZodString>>;
         pricePerDay: z.ZodNumber;
         stock: z.ZodOptional<z.ZodNumber>;
         categoryId: z.ZodString;

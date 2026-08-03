@@ -55,6 +55,7 @@ export type GearCountAggregateOutputType = {
     pricePerDay: number;
     stock: number;
     isAvailable: number;
+    images: number;
     providerId: number;
     categoryId: number;
     createdAt: number;
@@ -104,6 +105,7 @@ export type GearCountAggregateInputType = {
     pricePerDay?: true;
     stock?: true;
     isAvailable?: true;
+    images?: true;
     providerId?: true;
     categoryId?: true;
     createdAt?: true;
@@ -195,6 +197,7 @@ export type GearGroupByOutputType = {
     pricePerDay: number;
     stock: number;
     isAvailable: boolean;
+    images: string[];
     providerId: string;
     categoryId: string;
     createdAt: Date;
@@ -220,6 +223,7 @@ export type GearWhereInput = {
     pricePerDay?: Prisma.FloatFilter<"Gear"> | number;
     stock?: Prisma.IntFilter<"Gear"> | number;
     isAvailable?: Prisma.BoolFilter<"Gear"> | boolean;
+    images?: Prisma.StringNullableListFilter<"Gear">;
     providerId?: Prisma.StringFilter<"Gear"> | string;
     categoryId?: Prisma.StringFilter<"Gear"> | string;
     createdAt?: Prisma.DateTimeFilter<"Gear"> | Date | string;
@@ -238,6 +242,7 @@ export type GearOrderByWithRelationInput = {
     pricePerDay?: Prisma.SortOrder;
     stock?: Prisma.SortOrder;
     isAvailable?: Prisma.SortOrder;
+    images?: Prisma.SortOrder;
     providerId?: Prisma.SortOrder;
     categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
@@ -259,6 +264,7 @@ export type GearWhereUniqueInput = Prisma.AtLeast<{
     pricePerDay?: Prisma.FloatFilter<"Gear"> | number;
     stock?: Prisma.IntFilter<"Gear"> | number;
     isAvailable?: Prisma.BoolFilter<"Gear"> | boolean;
+    images?: Prisma.StringNullableListFilter<"Gear">;
     providerId?: Prisma.StringFilter<"Gear"> | string;
     categoryId?: Prisma.StringFilter<"Gear"> | string;
     createdAt?: Prisma.DateTimeFilter<"Gear"> | Date | string;
@@ -277,6 +283,7 @@ export type GearOrderByWithAggregationInput = {
     pricePerDay?: Prisma.SortOrder;
     stock?: Prisma.SortOrder;
     isAvailable?: Prisma.SortOrder;
+    images?: Prisma.SortOrder;
     providerId?: Prisma.SortOrder;
     categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
@@ -299,6 +306,7 @@ export type GearScalarWhereWithAggregatesInput = {
     pricePerDay?: Prisma.FloatWithAggregatesFilter<"Gear"> | number;
     stock?: Prisma.IntWithAggregatesFilter<"Gear"> | number;
     isAvailable?: Prisma.BoolWithAggregatesFilter<"Gear"> | boolean;
+    images?: Prisma.StringNullableListFilter<"Gear">;
     providerId?: Prisma.StringWithAggregatesFilter<"Gear"> | string;
     categoryId?: Prisma.StringWithAggregatesFilter<"Gear"> | string;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Gear"> | Date | string;
@@ -313,6 +321,7 @@ export type GearCreateInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     createdAt?: Date | string;
     updatedAt?: Date | string;
     provider: Prisma.UserCreateNestedOneWithoutGearListingsInput;
@@ -329,6 +338,7 @@ export type GearUncheckedCreateInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     providerId: string;
     categoryId: string;
     createdAt?: Date | string;
@@ -345,6 +355,7 @@ export type GearUpdateInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     provider?: Prisma.UserUpdateOneRequiredWithoutGearListingsNestedInput;
@@ -361,6 +372,7 @@ export type GearUncheckedUpdateInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     providerId?: Prisma.StringFieldUpdateOperationsInput | string;
     categoryId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -377,6 +389,7 @@ export type GearCreateManyInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     providerId: string;
     categoryId: string;
     createdAt?: Date | string;
@@ -391,6 +404,7 @@ export type GearUpdateManyMutationInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -403,6 +417,7 @@ export type GearUncheckedUpdateManyInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     providerId?: Prisma.StringFieldUpdateOperationsInput | string;
     categoryId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -416,6 +431,13 @@ export type GearListRelationFilter = {
 export type GearOrderByRelationAggregateInput = {
     _count?: Prisma.SortOrder;
 };
+export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null;
+    has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null;
+    hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>;
+    hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>;
+    isEmpty?: boolean;
+};
 export type GearCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     title?: Prisma.SortOrder;
@@ -425,6 +447,7 @@ export type GearCountOrderByAggregateInput = {
     pricePerDay?: Prisma.SortOrder;
     stock?: Prisma.SortOrder;
     isAvailable?: Prisma.SortOrder;
+    images?: Prisma.SortOrder;
     providerId?: Prisma.SortOrder;
     categoryId?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
@@ -506,6 +529,9 @@ export type GearUncheckedUpdateManyWithoutCategoryNestedInput = {
     updateMany?: Prisma.GearUpdateManyWithWhereWithoutCategoryInput | Prisma.GearUpdateManyWithWhereWithoutCategoryInput[];
     deleteMany?: Prisma.GearScalarWhereInput | Prisma.GearScalarWhereInput[];
 };
+export type GearCreateimagesInput = {
+    set: string[];
+};
 export type FloatFieldUpdateOperationsInput = {
     set?: number;
     increment?: number;
@@ -522,6 +548,10 @@ export type IntFieldUpdateOperationsInput = {
 };
 export type BoolFieldUpdateOperationsInput = {
     set?: boolean;
+};
+export type GearUpdateimagesInput = {
+    set?: string[];
+    push?: string | string[];
 };
 export type GearCreateNestedOneWithoutOrderItemsInput = {
     create?: Prisma.XOR<Prisma.GearCreateWithoutOrderItemsInput, Prisma.GearUncheckedCreateWithoutOrderItemsInput>;
@@ -594,6 +624,7 @@ export type GearCreateWithoutCategoryInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     createdAt?: Date | string;
     updatedAt?: Date | string;
     provider: Prisma.UserCreateNestedOneWithoutGearListingsInput;
@@ -609,6 +640,7 @@ export type GearUncheckedCreateWithoutCategoryInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     providerId: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -648,6 +680,7 @@ export type GearScalarWhereInput = {
     pricePerDay?: Prisma.FloatFilter<"Gear"> | number;
     stock?: Prisma.IntFilter<"Gear"> | number;
     isAvailable?: Prisma.BoolFilter<"Gear"> | boolean;
+    images?: Prisma.StringNullableListFilter<"Gear">;
     providerId?: Prisma.StringFilter<"Gear"> | string;
     categoryId?: Prisma.StringFilter<"Gear"> | string;
     createdAt?: Prisma.DateTimeFilter<"Gear"> | Date | string;
@@ -662,6 +695,7 @@ export type GearCreateWithoutOrderItemsInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     createdAt?: Date | string;
     updatedAt?: Date | string;
     provider: Prisma.UserCreateNestedOneWithoutGearListingsInput;
@@ -677,6 +711,7 @@ export type GearUncheckedCreateWithoutOrderItemsInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     providerId: string;
     categoryId: string;
     createdAt?: Date | string;
@@ -705,6 +740,7 @@ export type GearUpdateWithoutOrderItemsInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     provider?: Prisma.UserUpdateOneRequiredWithoutGearListingsNestedInput;
@@ -720,6 +756,7 @@ export type GearUncheckedUpdateWithoutOrderItemsInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     providerId?: Prisma.StringFieldUpdateOperationsInput | string;
     categoryId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -735,6 +772,7 @@ export type GearCreateWithoutReviewsInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     createdAt?: Date | string;
     updatedAt?: Date | string;
     provider: Prisma.UserCreateNestedOneWithoutGearListingsInput;
@@ -750,6 +788,7 @@ export type GearUncheckedCreateWithoutReviewsInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     providerId: string;
     categoryId: string;
     createdAt?: Date | string;
@@ -778,6 +817,7 @@ export type GearUpdateWithoutReviewsInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     provider?: Prisma.UserUpdateOneRequiredWithoutGearListingsNestedInput;
@@ -793,6 +833,7 @@ export type GearUncheckedUpdateWithoutReviewsInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     providerId?: Prisma.StringFieldUpdateOperationsInput | string;
     categoryId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -808,6 +849,7 @@ export type GearCreateWithoutProviderInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     createdAt?: Date | string;
     updatedAt?: Date | string;
     category: Prisma.CategoryCreateNestedOneWithoutGearListingsInput;
@@ -823,6 +865,7 @@ export type GearUncheckedCreateWithoutProviderInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     categoryId: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -859,6 +902,7 @@ export type GearCreateManyCategoryInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     providerId: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -872,6 +916,7 @@ export type GearUpdateWithoutCategoryInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     provider?: Prisma.UserUpdateOneRequiredWithoutGearListingsNestedInput;
@@ -887,6 +932,7 @@ export type GearUncheckedUpdateWithoutCategoryInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     providerId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -902,6 +948,7 @@ export type GearUncheckedUpdateManyWithoutCategoryInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     providerId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -915,6 +962,7 @@ export type GearCreateManyProviderInput = {
     pricePerDay: number;
     stock?: number;
     isAvailable?: boolean;
+    images?: Prisma.GearCreateimagesInput | string[];
     categoryId: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -928,6 +976,7 @@ export type GearUpdateWithoutProviderInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     category?: Prisma.CategoryUpdateOneRequiredWithoutGearListingsNestedInput;
@@ -943,6 +992,7 @@ export type GearUncheckedUpdateWithoutProviderInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     categoryId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -958,6 +1008,7 @@ export type GearUncheckedUpdateManyWithoutProviderInput = {
     pricePerDay?: Prisma.FloatFieldUpdateOperationsInput | number;
     stock?: Prisma.IntFieldUpdateOperationsInput | number;
     isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    images?: Prisma.GearUpdateimagesInput | string[];
     categoryId?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1003,6 +1054,7 @@ export type GearSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     pricePerDay?: boolean;
     stock?: boolean;
     isAvailable?: boolean;
+    images?: boolean;
     providerId?: boolean;
     categoryId?: boolean;
     createdAt?: boolean;
@@ -1022,6 +1074,7 @@ export type GearSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
     pricePerDay?: boolean;
     stock?: boolean;
     isAvailable?: boolean;
+    images?: boolean;
     providerId?: boolean;
     categoryId?: boolean;
     createdAt?: boolean;
@@ -1038,6 +1091,7 @@ export type GearSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
     pricePerDay?: boolean;
     stock?: boolean;
     isAvailable?: boolean;
+    images?: boolean;
     providerId?: boolean;
     categoryId?: boolean;
     createdAt?: boolean;
@@ -1054,12 +1108,13 @@ export type GearSelectScalar = {
     pricePerDay?: boolean;
     stock?: boolean;
     isAvailable?: boolean;
+    images?: boolean;
     providerId?: boolean;
     categoryId?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type GearOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "brand" | "specifications" | "pricePerDay" | "stock" | "isAvailable" | "providerId" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["gear"]>;
+export type GearOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "brand" | "specifications" | "pricePerDay" | "stock" | "isAvailable" | "images" | "providerId" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["gear"]>;
 export type GearInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     provider?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
     category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>;
@@ -1092,6 +1147,7 @@ export type $GearPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         pricePerDay: number;
         stock: number;
         isAvailable: boolean;
+        images: string[];
         providerId: string;
         categoryId: string;
         createdAt: Date;
@@ -1462,6 +1518,7 @@ export interface GearFieldRefs {
     readonly pricePerDay: Prisma.FieldRef<"Gear", 'Float'>;
     readonly stock: Prisma.FieldRef<"Gear", 'Int'>;
     readonly isAvailable: Prisma.FieldRef<"Gear", 'Boolean'>;
+    readonly images: Prisma.FieldRef<"Gear", 'String[]'>;
     readonly providerId: Prisma.FieldRef<"Gear", 'String'>;
     readonly categoryId: Prisma.FieldRef<"Gear", 'String'>;
     readonly createdAt: Prisma.FieldRef<"Gear", 'DateTime'>;

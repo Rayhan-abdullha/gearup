@@ -11,6 +11,7 @@ export declare const providerServices: {
         pricePerDay: number;
         stock: number;
         isAvailable: boolean;
+        images: string[];
         providerId: string;
         categoryId: string;
     }>;
@@ -41,6 +42,7 @@ export declare const providerServices: {
         pricePerDay: number;
         stock: number;
         isAvailable: boolean;
+        images: string[];
         providerId: string;
         categoryId: string;
     }>;
@@ -55,6 +57,7 @@ export declare const providerServices: {
         pricePerDay: number;
         stock: number;
         isAvailable: boolean;
+        images: string[];
         providerId: string;
         categoryId: string;
     }>;
@@ -76,6 +79,7 @@ export declare const providerServices: {
                 pricePerDay: number;
                 stock: number;
                 isAvailable: boolean;
+                images: string[];
                 providerId: string;
                 categoryId: string;
             };

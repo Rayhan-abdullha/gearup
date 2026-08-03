@@ -16,6 +16,7 @@ export declare const gearServices: {
         pricePerDay: number;
         stock: number;
         isAvailable: boolean;
+        images: string[];
         providerId: string;
         categoryId: string;
     })[]>;
@@ -57,6 +58,7 @@ export declare const gearServices: {
         pricePerDay: number;
         stock: number;
         isAvailable: boolean;
+        images: string[];
         providerId: string;
         categoryId: string;
     }>;

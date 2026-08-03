@@ -10,6 +10,7 @@ const createGear = async (payload: IGear) => {
     specifications,
     pricePerDay,
     stock = 1,
+    images = [],
     providerId,
     categoryId,
   } = payload;
@@ -30,6 +31,12 @@ const createGear = async (payload: IGear) => {
   if (!category) {
     throw new Error("Category not found");
   }
+
+  if (!images || images.length === 0) {
+    images.push(
+      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500&h=500&fit=crop",
+    );
+  }
   const newGear = await prisma.gear.create({
     data: {
       title,
@@ -40,6 +47,7 @@ const createGear = async (payload: IGear) => {
       stock,
       providerId,
       categoryId,
+      images,
     },
   });
 
@@ -75,6 +83,7 @@ const updateGear = async (gearId: string, providerId: string, payload: any) => {
     isAvailable: payload.isAvailable ?? existingGear.isAvailable,
     providerId: existingGear.providerId,
     categoryId: payload.categoryId ?? existingGear.categoryId,
+    images: payload.images ?? existingGear.images,
   };
 
   return await prisma.gear.update({

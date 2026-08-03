@@ -4,9 +4,10 @@ export const createGearSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
     description: z
       .string()
-      .min(10, "Provide a description of at least 10 characters"),
+      .min(5, "Provide a description of at least 10 characters"),
     specifications: z.object({}).optional(),
     brand: z.string().min(2, "Brand must be at least 2 characters"),
+    images: z.array(z.string()).optional(),
     pricePerDay: z.number().positive("Price per day must be a positive number"),
     stock: z.number().int().nonnegative("Stock cannot be negative").optional(),
     categoryId: z.string().uuid("Invalid category UUID format"),
