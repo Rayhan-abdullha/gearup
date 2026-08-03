@@ -77,25 +77,57 @@ const createRentalOrder = async (
 };
 
 const getUserRentals = async (userId: string) => {
-  const rentals = await prisma.order.findMany({
-    where: { customerId: userId },
-    include: {
-      review: true,
-      items: {
-        include: {
-          gear: {
-            select: {
-              title: true,
-              brand: true,
+  const result = await prisma.$transaction(async (tx) => {
+    const rentals = await prisma.order.findMany({
+      where: { customerId: userId },
+      include: {
+        review: true,
+        items: {
+          include: {
+            gear: {
+              select: {
+                title: true,
+                brand: true,
+              },
             },
           },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "desc" },
+    });
+
+    let totalSpent = 0;
+    let activeRentals = 0;
+    let completedRentals = 0;
+
+    for (const rental of rentals) {
+      totalSpent += rental.totalAmount;
+      if (
+        rental.status === "PLACED" ||
+        rental.status === "PAID" ||
+        rental.status === "PICKED_UP"
+      ) {
+        activeRentals++;
+      } else if (rental.status === "RETURNED") {
+        completedRentals++;
+      }
+
+      for (const item of rentals) {
+        if (item.status === "RETURNED") {
+          completedRentals++;
+        }
+      }
+    }
+
+    return {
+      rentals,
+      totalSpent,
+      activeRentals,
+      completedRentals,
+    };
   });
 
-  return rentals;
+  return result;
 };
 
 const getRentalDetails = async (orderId: string, userId: string) => {

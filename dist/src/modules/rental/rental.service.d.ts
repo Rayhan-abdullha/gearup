@@ -20,41 +20,46 @@ export declare const rentalServices: {
         transactionId: string | null;
         customerId: string;
     }>;
-    getUserRentals: (userId: string) => Promise<({
-        items: ({
-            gear: {
-                title: string;
-                brand: string;
-            };
+    getUserRentals: (userId: string) => Promise<{
+        rentals: ({
+            items: ({
+                gear: {
+                    title: string;
+                    brand: string;
+                };
+            } & {
+                id: string;
+                quantity: number;
+                priceAtRent: number;
+                startDate: Date;
+                endDate: Date;
+                orderId: string;
+                gearId: string;
+            })[];
+            review: {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                customerId: string;
+                orderId: string;
+                gearId: string;
+                rating: number;
+                comment: string | null;
+            } | null;
         } & {
             id: string;
-            quantity: number;
-            priceAtRent: number;
-            startDate: Date;
-            endDate: Date;
-            orderId: string;
-            gearId: string;
-        })[];
-        review: {
-            id: string;
+            status: import("../../../generated/prisma/enums").OrderStatus;
             createdAt: Date;
             updatedAt: Date;
+            totalAmount: number;
+            paymentStatus: import("../../../generated/prisma/enums").PaymentStatus;
+            transactionId: string | null;
             customerId: string;
-            orderId: string;
-            gearId: string;
-            rating: number;
-            comment: string | null;
-        } | null;
-    } & {
-        id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
-        createdAt: Date;
-        updatedAt: Date;
-        totalAmount: number;
-        paymentStatus: import("../../../generated/prisma/enums").PaymentStatus;
-        transactionId: string | null;
-        customerId: string;
-    })[]>;
+        })[];
+        totalSpent: number;
+        activeRentals: number;
+        completedRentals: number;
+    }>;
     getRentalDetails: (orderId: string, userId: string) => Promise<{
         items: ({
             gear: {
